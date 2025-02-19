@@ -290,3 +290,22 @@ mod postgres_impl {
         to_sql_checked!();
     }
 }
+
+#[cfg(feature = "mysql")]
+mod mysql_impl {
+    use super::*;
+    use mysql_common::value::convert::ToValue;
+
+    impl ToValue for Value {
+        fn to_value(&self) -> mysql_async::Value {
+            match self {
+                stmt::Value::Bool(value) => value.to_value(),
+                stmt::Value::I64(value) => value.to_value(),
+                stmt::Value::Id(value) => value.to_string().to_value(),
+                stmt::Value::Null => mysql_async::Value::NULL,
+                stmt::Value::String(value) => value.to_value(),
+                value => todo!("{:#?}", value),
+            }
+        }
+    }
+}

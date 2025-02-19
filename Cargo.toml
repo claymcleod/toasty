@@ -11,6 +11,7 @@ members = [
     "src/db/ddb",
     "src/db/sqlite",
     "src/db/pgsql",
+    "src/db/mysql",
 
     # General utilities.
     "src/std-util",
@@ -37,6 +38,11 @@ clap = { version = "4.5.20", features = ["derive"] }
 heck = "0.5.0"
 indexmap = "2.6.0"
 pluralizer = "0.4.0"
+mysql_async = { version = "0.35.1", default-features = false, features = [
+    "minimal",
+    "native-tls-tls",
+] }
+mysql_common = "0.34.1"
 postgres = "0.19.10"
 postgres-types = "0.2.9"
 pretty_assertions = "1.4.1"

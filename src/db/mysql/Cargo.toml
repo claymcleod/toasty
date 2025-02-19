@@ -1,0 +1,10 @@
+[package]
+name = "toasty-mysql"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mysql_async.workspace = true
+toasty-core = { workspace = true, features = ["mysql"] }
+tokio.workspace = true
+mysql_common.workspace = true
