@@ -9,6 +9,8 @@ anyhow.workspace = true
 async-trait.workspace = true
 indexmap.workspace = true
 postgres = { workspace = true, optional = true }
+mysql_async = { workspace = true, optional = true }
+mysql_common = { workspace = true, optional = true }
 std-util.workspace = true
 tokio-stream.workspace = true
 
@@ -18,3 +20,4 @@ pretty_assertions.workspace = true
 [features]
 default = []
 postgres = ["dep:postgres"]
+mysql = ["dep:mysql_async", "dep:mysql_common"]
