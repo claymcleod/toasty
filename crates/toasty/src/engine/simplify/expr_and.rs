@@ -13,6 +13,11 @@ impl Simplify<'_> {
             }
         }
 
+        // `and(..., false, ...) → false`
+        if expr.operands.iter().any(|e| e.is_false()) {
+            return Some(false.into());
+        }
+
         expr.operands.retain(|expr| !expr.is_true());
 
         if expr.operands.is_empty() {
@@ -144,19 +149,16 @@ mod tests {
     }
 
     #[test]
-    fn flatten_with_false_preserved() {
+    fn flatten_with_false_in_outer() {
         let schema = test_schema();
         let mut simplify = Simplify::new(&schema);
 
-        // `and(false, and(B, C)) → and(false, B, C)`, false is NOT removed
+        // `and(false, and(B, C)) → false`
         let mut expr = nested_and(false.into(), Expr::arg(1), Expr::arg(2));
         let result = simplify.simplify_expr_and(&mut expr);
 
-        assert!(result.is_none());
-        assert_eq!(expr.operands.len(), 3);
-        assert!(expr.operands[0].is_false());
-        assert_eq!(expr.operands[1], Expr::arg(1));
-        assert_eq!(expr.operands[2], Expr::arg(2));
+        assert!(result.is_some());
+        assert!(result.unwrap().is_false());
     }
 
     #[test]
@@ -164,15 +166,12 @@ mod tests {
         let schema = test_schema();
         let mut simplify = Simplify::new(&schema);
 
-        // `and(A, and(false, C)) → and(A, false, C)`
+        // `and(A, and(false, C)) → false`
         let mut expr = nested_and(Expr::arg(0), false.into(), Expr::arg(2));
         let result = simplify.simplify_expr_and(&mut expr);
 
-        assert!(result.is_none());
-        assert_eq!(expr.operands.len(), 3);
-        assert_eq!(expr.operands[0], Expr::arg(0));
-        assert!(expr.operands[1].is_false());
-        assert_eq!(expr.operands[2], Expr::arg(2));
+        assert!(result.is_some());
+        assert!(result.unwrap().is_false());
     }
 
     #[test]
